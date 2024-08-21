@@ -1,7 +1,7 @@
 # Workflow
 # by default jobs in workflow run in parallel, use needs to run it sequentially
 name: Deploy Project
-on: push
+on: [push, workflow_dispatch]
 jobs:
   # job 1: running unit tests
   run-unit-tests:
