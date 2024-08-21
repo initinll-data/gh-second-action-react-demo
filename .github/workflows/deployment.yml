@@ -1,0 +1,53 @@
+# Workflow
+# by default jobs in workflow run in parallel
+name: Deploy Project
+on: push
+jobs:
+  # job 1: running unit tests
+  run-unit-tests:
+      # every job has its own runner, basically a VM which is isolated from other jobs VM
+      runs-on: ubuntu-latest
+      steps:
+        # step 1: fetch code from repository to runner
+        - name: Get code
+          uses: actions/checkout@v4
+        # step 2: Install node js on runner
+        - name: Install node
+          uses: actions/setup-node@v4
+          with:
+            node-version: '20.16.0'
+        # step 3: verify node version
+        - name: Node version
+          run: node -v
+        # step 4: Install project dependencies
+        - name: Install dependencies
+          run: npm ci
+        # step 5: Run project tests
+        - name: Run tests
+          run: npm test
+  # job 2: deploy code
+  deploy-code:
+    # every job has its own runner, basically a VM which is isolated from other jobs VM
+    runs-on: ubuntu-latest
+    steps:
+      # step 1: fetch code from repository to runner
+      - name: Get code
+        uses: actions/checkout@v4
+      # step 2: Install node js on runner
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.16.0'
+      # step 3: verify node version
+      - name: Node version
+        run: node -v
+      # step 4: Install project dependencies
+      - name: Install dependencies
+        run: npm ci
+      # step 5: Build project
+      - name: Build project
+        run: npm run build
+      # step 6: Deploy project
+      - name: Build project
+        run: echo "Deploying..."
+
