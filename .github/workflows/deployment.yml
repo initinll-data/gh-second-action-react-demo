@@ -1,5 +1,5 @@
 # Workflow
-# by default jobs in workflow run in parallel
+# by default jobs in workflow run in parallel, use needs to run it sequentially
 name: Deploy Project
 on: push
 jobs:
@@ -27,6 +27,8 @@ jobs:
           run: npm test
   # job 2: deploy code
   deploy-code:
+    # runs jobs sequntially instead of parallel
+    needs: run-unit-tests
     # every job has its own runner, basically a VM which is isolated from other jobs VM
     runs-on: ubuntu-latest
     steps:
