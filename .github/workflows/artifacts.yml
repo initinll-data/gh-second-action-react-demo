@@ -24,7 +24,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.npm
-          key: deps-node-modules-${{ hashFiles('**/package-lock/json') }}
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       # step 5: Install project dependencies
       - name: Step - Install dependencies
         run: npm ci
@@ -61,7 +61,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.npm
-          key: deps-node-modules-${{ hashFiles('**/package-lock/json') }}
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       # step 5: Install project dependencies
       - name: Step - Install dependencies
         run: npm ci
