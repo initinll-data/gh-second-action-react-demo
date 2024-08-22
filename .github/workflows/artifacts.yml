@@ -34,6 +34,10 @@ jobs:
     needs: unit-test-job
     # every job has its own runner, basically a VM which is isolated from other jobs VM
     runs-on: ubuntu-latest
+    # Passing information between jobs using outputs
+    # Job outputs are available to all downstream jobs that depend on this job.
+    outputs:
+      script-files: ${{ steps.publish.outputs.js-file-name }}
     steps:
       # step 1: fetch code from repository to runner
       - name: Step - Get code
@@ -52,7 +56,11 @@ jobs:
       # step 5: Build project
       - name: Step - Build project
         run: npm run build
-      # step 6: Upload website artifacts
+      # step 6: Publish js file name as job output to be consumer in downstream job
+      - name: Step - Publish JS filename
+        id: publish
+        run: find dist/assets/*.js -type f -execdir echo 'js-file-name={}' >> $GITHUB_OUTPUT ';'
+      # step 7: Upload website artifacts
       - name: Step - Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -79,6 +87,10 @@ jobs:
       - name: Step - Output contents
         run: ls
       # step 3: Deploy project
+      # accessing previous job output
+      - name: Step - Output js filename
+        run: echo "${{ needs.build-code-job.outputs.script-files }}"
+      # step 4: Deploy project
       - name: Step - Deploy project
         run: echo "Deploying..."
 
