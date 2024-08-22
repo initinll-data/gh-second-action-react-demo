@@ -1,0 +1,82 @@
+# Workflow
+# by default jobs in workflow run in parallel, use needs to run it sequentially
+name: Pull Request
+# mentioned workflow trigger events on condition
+on: 
+  # triggering Pull Request workflow on pull_request by activity - [opened, closed] & branch filters
+  pull_request:
+    types: [opened, closed]
+    # Sequence of patterns matched against refs/heads
+    # You cannot use branches and branches-ignore to filter the same event in a single workflow. 
+    # If you want to both include and exclude branch patterns for a single event, 
+    # use the branches filter along with the ! character to indicate which branches should be excluded.
+    branches:
+      - main
+      - 'mona/octocat'
+      - 'releases/**'
+      - '!releases/**-alpha'
+    branches-ignore:
+      - 'dev*'
+      - 'releases/**-alpha'
+  # adding manual workflow dispatch button
+  workflow_dispatch: 
+  push: 
+    branches-ignore: 
+      - qa    
+    paths:
+      - 'sub-project/**'
+      - '!sub-project/docs/**'
+jobs:
+  # job 1: running unit tests
+  run-unit-tests:
+    # every job has its own runner, basically a VM which is isolated from other jobs VM
+    runs-on: ubuntu-latest
+    steps:
+      # step 1: fetch code from repository to runner
+      - name: Get code
+        uses: actions/checkout@v4
+      # step 2: Install node js on runner
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.16.0'
+      # step 3: verify node version
+      - name: Node version
+        run: node -v
+      # step 4: Install project dependencies
+      - name: Install dependencies
+        run: npm ci
+      # step 5: Run project lint
+      - name: Run lint
+        run: npm run lint
+      # step 6: Run project tests
+      - name: Run tests
+        run: npm test
+  # job 2: deploy code
+  deploy-code:
+    # runs jobs sequntially instead of parallel
+    needs: run-unit-tests
+    # every job has its own runner, basically a VM which is isolated from other jobs VM
+    runs-on: ubuntu-latest
+    steps:
+      # step 1: fetch code from repository to runner
+      - name: Get code
+        uses: actions/checkout@v4
+      # step 2: Install node js on runner
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.16.0'
+      # step 3: verify node version
+      - name: Node version
+        run: node -v
+      # step 4: Install project dependencies
+      - name: Install dependencies
+        run: npm ci
+      # step 5: Build project
+      - name: Build project
+        run: npm run build
+      # step 6: Deploy project
+      - name: Build project
+        run: echo "Deploying..."
+
