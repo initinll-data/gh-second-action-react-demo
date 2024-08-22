@@ -1,0 +1,70 @@
+# Workflow
+# by default jobs in workflow run in parallel, use needs to run it sequentially
+name: Artifact workflow
+on: [push, workflow_dispatch]
+jobs:
+  # job 1: running unit tests
+  run-unit-tests:
+    # every job has its own runner, basically a VM which is isolated from other jobs VM
+    runs-on: ubuntu-latest
+    steps:
+      # step 1: fetch code from repository to runner
+      - name: Get code
+        uses: actions/checkout@v4
+      # step 2: Install node js on runner
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.16.0'
+      # step 3: verify node version
+      - name: Node version
+        run: node -v
+      # step 4: Install project dependencies
+      - name: Install dependencies
+        run: npm ci
+      # step 5: Run project lint
+      - name: Run lint
+        run: npm run lint
+      # step 6: Run project tests
+      - name: Run tests
+        run: npm test
+  # job 2: deploy code
+  build-code:
+    # runs jobs sequntially instead of parallel
+    needs: run-unit-tests
+    # every job has its own runner, basically a VM which is isolated from other jobs VM
+    runs-on: ubuntu-latest
+    steps:
+      # step 1: fetch code from repository to runner
+      - name: Get code
+        uses: actions/checkout@v4
+      # step 2: Install node js on runner
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.16.0'
+      # step 3: verify node version
+      - name: Node version
+        run: node -v
+      # step 4: Install project dependencies
+      - name: Install dependencies
+        run: npm ci
+      # step 5: Build project
+      - name: Build project
+        run: npm run build
+      # step 6: Upload website artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+            # Name of the artifact to upload.
+            # Optional. Default is 'artifact'
+            name: dist-files
+            # A file, directory or wildcard pattern that describes what to upload
+            # Required.
+            path: |
+                dist
+                package.json
+      # step 6: Deploy project
+      - name: Deploy project
+        run: echo "Deploying..."
+
