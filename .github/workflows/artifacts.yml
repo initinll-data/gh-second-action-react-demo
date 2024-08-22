@@ -11,21 +11,27 @@ jobs:
       # step 1: fetch code from repository to runner
       - name: Step - Get code
         uses: actions/checkout@v4
-      # step 2: Install node js on runner
+      # step 2: caching dependencies
+      - name: Cache dependencies
+        uses: actions/checkout@v4
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{ hashFiles('**/package-lock/json') }}
+      # step 3: Install node js on runner
       - name: Step - Install node
         uses: actions/setup-node@v4
         with:
           node-version: '20.16.0'
-      # step 3: verify node version
+      # step 4: verify node version
       - name: Step - Check Node version
         run: node -v
-      # step 4: Install project dependencies
+      # step 5: Install project dependencies
       - name: Step - Install dependencies
         run: npm ci
-      # step 5: Run project lint
+      # step 6: Run project lint
       - name: Step - Run lint
         run: npm run lint
-      # step 6: Run project tests
+      # step 7: Run project tests
       - name: Step - Run tests
         run: npm test
   # job 2: building code
@@ -50,17 +56,23 @@ jobs:
       # step 3: verify node version
       - name: Step - Check Node version
         run: node -v
-      # step 4: Install project dependencies
+      # step 4: caching dependencies
+      - name: Cache dependencies
+        uses: actions/checkout@v4
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{ hashFiles('**/package-lock/json') }}
+      # step 5: Install project dependencies
       - name: Step - Install dependencies
         run: npm ci
-      # step 5: Build project
+      # step 6: Build project
       - name: Step - Build project
         run: npm run build
-      # step 6: Publish js file name as job output to be consumer in downstream job
+      # step 7: Publish js file name as job output to be consumer in downstream job
       - name: Step - Publish JS filename
         id: publish
         run: find dist/assets/*.js -type f -execdir echo 'js-file-name={}' >> $GITHUB_OUTPUT ';'
-      # step 7: Upload website artifacts
+      # step 8: Upload website artifacts
       - name: Step - Upload artifacts
         uses: actions/upload-artifact@v4
         with:
