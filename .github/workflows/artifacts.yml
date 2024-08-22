@@ -10,21 +10,21 @@ jobs:
     steps:
       # step 1: fetch code from repository to runner
       - name: Step - Get code
-        uses: actions/checkout@v4
-      # step 2: caching dependencies
+        uses: actions/checkout@v4      
+      # step 2: Install node js on runner
+      - name: Step - Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.16.0'
+      # step 3: verify node version
+      - name: Step - Check Node version
+        run: node -v
+      # step 4: caching dependencies
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
           path: ~/.npm
           key: deps-node-modules-${{ hashFiles('**/package-lock/json') }}
-      # step 3: Install node js on runner
-      - name: Step - Install node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.16.0'
-      # step 4: verify node version
-      - name: Step - Check Node version
-        run: node -v
       # step 5: Install project dependencies
       - name: Step - Install dependencies
         run: npm ci
