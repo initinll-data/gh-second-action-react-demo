@@ -1,10 +1,22 @@
 # Workflow
 name: Output Information
 on: workflow_dispatch
+env:
+  USER_NAME: root
 jobs:
   info:
+    env: 
+      JOB_ID: 1
     runs-on: ubuntu-latest
     steps:
+    - name: Output job id
+      run: echo $JOB_ID
     - name: Output Github context
       run: echo "${{ toJson(github) }}"
-
+  show:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show user
+        run: echo ${{ env.USER_NAME }}
+      - name: Show job
+        run: echo $JOB_ID
