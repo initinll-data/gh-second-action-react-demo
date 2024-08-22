@@ -4,56 +4,56 @@ name: Artifact workflow
 on: [push, workflow_dispatch]
 jobs:
   # job 1: running unit tests
-  run-unit-tests:
+  unit-test-job:
     # every job has its own runner, basically a VM which is isolated from other jobs VM
     runs-on: ubuntu-latest
     steps:
       # step 1: fetch code from repository to runner
-      - name: Get code
+      - name: Step - Get code
         uses: actions/checkout@v4
       # step 2: Install node js on runner
-      - name: Install node
+      - name: Step - Install node
         uses: actions/setup-node@v4
         with:
           node-version: '20.16.0'
       # step 3: verify node version
-      - name: Node version
+      - name: Step - Check Node version
         run: node -v
       # step 4: Install project dependencies
-      - name: Install dependencies
+      - name: Step - Install dependencies
         run: npm ci
       # step 5: Run project lint
-      - name: Run lint
+      - name: Step - Run lint
         run: npm run lint
       # step 6: Run project tests
-      - name: Run tests
+      - name: Step - Run tests
         run: npm test
-  # job 2: deploy code
-  build-code:
+  # job 2: building code
+  build-code-job:
     # runs jobs sequntially instead of parallel
-    needs: run-unit-tests
+    needs: unit-test-job
     # every job has its own runner, basically a VM which is isolated from other jobs VM
     runs-on: ubuntu-latest
     steps:
       # step 1: fetch code from repository to runner
-      - name: Get code
+      - name: Step - Get code
         uses: actions/checkout@v4
       # step 2: Install node js on runner
-      - name: Install node
+      - name: Step - Install node
         uses: actions/setup-node@v4
         with:
           node-version: '20.16.0'
       # step 3: verify node version
-      - name: Node version
+      - name: Step - Check Node version
         run: node -v
       # step 4: Install project dependencies
-      - name: Install dependencies
+      - name: Step - Install dependencies
         run: npm ci
       # step 5: Build project
-      - name: Build project
+      - name: Step - Build project
         run: npm run build
       # step 6: Upload website artifacts
-      - name: Upload artifacts
+      - name: Step - Upload artifacts
         uses: actions/upload-artifact@v4
         with:
             # Name of the artifact to upload.
@@ -61,10 +61,24 @@ jobs:
             name: dist-files
             # A file, directory or wildcard pattern that describes what to upload
             # Required.
-            path: |
-                dist
-                package.json
-      # step 6: Deploy project
-      - name: Deploy project
+            path: dist
+            # path: |
+            #     dist
+            #     package.json
+  # job 3: deploying code
+  deploy-code-job:
+    needs: build-code-job
+    runs-on: ubuntu-latest
+    steps:
+      # step 1: Download website artifacts from previous job
+      - name: Step - Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+            name: dist-files
+      # step 2: Output artifacts content
+      - name: Step - Output contents
+        run: ls
+      # step 3: Deploy project
+      - name: Step - Deploy project
         run: echo "Deploying..."
 
