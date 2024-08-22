@@ -22,7 +22,10 @@ jobs:
         # step 4: Install project dependencies
         - name: Install dependencies
           run: npm ci
-        # step 5: Run project tests
+        # step 5: Run project lint
+        - name: Run lint
+          run: npm run lint
+        # step 6: Run project tests
         - name: Run tests
           run: npm test
   # job 2: deploy code
