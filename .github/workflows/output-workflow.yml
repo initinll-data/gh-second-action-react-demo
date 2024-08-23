@@ -20,5 +20,9 @@ jobs:
         run: echo ${{ env.USER_NAME }}
       - name: Show job
         run: echo $JOB_ID
+  # using reusable workflow - reusable-workflow.yml
+  # https://docs.github.com/en/actions/sharing-automations/reusing-workflows
   deploy:
     uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      echo-var: "Hello from caller"

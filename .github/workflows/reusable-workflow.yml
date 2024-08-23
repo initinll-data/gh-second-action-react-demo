@@ -1,6 +1,19 @@
 name: Reusable Deploy Workflow
-on: workflow_call
+# https://docs.github.com/en/actions/sharing-automations/reusing-workflows
+on: 
+  workflow_call:
+    inputs:
+      echo-var:
+        description: the variable name that needs to be echoed in caller wf
+        type: string
+        required: false
+        default: 'hello-world'
 jobs:
+  display-input:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output input
+        run: echo ${{ inputs.echo-var }}
   deploy:
     runs-on: ubuntu-latest
     steps:
