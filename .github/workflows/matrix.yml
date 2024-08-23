@@ -1,0 +1,26 @@
+name: Matrix Demo
+on: push
+
+# A matrix strategy lets you use variables in a single job definition to automatically 
+# create multiple job runs that are based on the combinations of the variables. 
+# For example, you can use a matrix strategy to test your code in multiple versions of a 
+# language or on multiple operating systems.
+# https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/running-variations-of-jobs-in-a-workflow
+jobs:
+  build:
+    strategy:
+      matrix:
+        node-version: [12, 14, 16]
+        operating-system: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.operating-system }}
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+            node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build Project
+        run: npm run build
