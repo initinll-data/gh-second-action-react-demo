@@ -11,8 +11,18 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
+        # You can specify multiple variables to create a multi-dimensional matrix. 
+        # A job will run for each possible combination of the variables.
         node-version: [12, 14, 16]
         operating-system: [ubuntu-latest, windows-latest]
+        # to expand existing matrix configurations or to add new configurations. The value of include is a list of objects.
+        include:
+          - node-version: 18
+          - operating-system: ubuntu-latest
+        # To remove specific configurations defined in the matrix
+        exclude:
+          - node-version: 12
+          - operating-system: windows-latest
     runs-on: ${{ matrix.operating-system }}
     steps:
       - name: Get code
