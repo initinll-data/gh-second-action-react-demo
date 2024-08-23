@@ -1,5 +1,5 @@
 # Workflow
-# by default jobs in workflow run in parallel, use needs to run it sequentially
+# https://docs.github.com/en/actions/writing-workflows/choosing-where-your-workflow-runs/running-jobs-in-a-container
 name: Container Workflow
 on: [push, workflow_dispatch]
 jobs:
@@ -8,7 +8,7 @@ jobs:
     # every job has its own runner, basically a VM which is isolated from other jobs VM
     runs-on: ubuntu-latest
     container: 
-      image: 20.16.0-alpine3.20
+      image: node:20.16.0-alpine3.20
     steps:
       # step 1: fetch code from repository to runner
       - name: Get code
@@ -25,4 +25,3 @@ jobs:
       # step 5: Run project tests
       - name: Run tests
         run: npm test
-
