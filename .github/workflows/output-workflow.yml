@@ -1,5 +1,5 @@
 # Workflow
-name: Output Information
+name: Output Reusable Workflow Information
 on: workflow_dispatch
 env:
   USER_NAME: root
