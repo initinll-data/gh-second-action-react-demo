@@ -81,3 +81,19 @@ jobs:
         run: ls
       - name: Deploy
         run: echo "Deploying..."
+  # controlling execution of job via "if"
+  # Github Status check functions - 
+  # 1. failure() - Returns true when any previous step of a job fails. If you have a chain of dependent jobs, failure() returns true if any ancestor job fails.
+  # 2. success() - Returns true when all previous steps have succeeded.
+  # 3. always() - Causes the step to always execute, and returns true, even when canceled. 
+  # 4. cancelled() - Returns true if the workflow was canceled.
+  report:
+    needs: [lint, deploy]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output information
+        run: |
+          echo "Something went wrong"
+          echo "${{ github }}"
+
