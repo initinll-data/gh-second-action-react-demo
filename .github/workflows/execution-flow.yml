@@ -36,15 +36,22 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
+      # Prevents a job from failing when a step fails. Set to true to allow a job to pass when this step fails.
+      # conclusion - The result of a completed step after continue-on-error is applied. Possible values are success, failure, cancelled, or skipped. When a continue-on-error step fails, the outcome is failure, but the final conclusion is success.
+      # outcome - The result of a completed step before continue-on-error is applied. Possible values are success, failure, cancelled, or skipped. When a continue-on-error step fails, the outcome is failure, but the final conclusion is success.
       - name: Test code
+        continue-on-error: true
         id: run-tests
         run: npm run test
       # controlling execution of step via "if"
+      # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#steps-context
       # Github Status check functions - 
       # 1. failure() - Returns true when any previous step of a job fails. If you have a chain of dependent jobs, failure() returns true if any ancestor job fails.
       # 2. success() - Returns true when all previous steps have succeeded.
       # 3. always() - Causes the step to always execute, and returns true, even when canceled. 
       # 4. cancelled() - Returns true if the workflow was canceled.
+      # conclusion - The result of a completed step after continue-on-error is applied. Possible values are success, failure, cancelled, or skipped. When a continue-on-error step fails, the outcome is failure, but the final conclusion is success.
+      # outcome - The result of a completed step before continue-on-error is applied. Possible values are success, failure, cancelled, or skipped. When a continue-on-error step fails, the outcome is failure, but the final conclusion is success.
       - name: Upload test report
         if: failure() && steps.run-tests.outcome == 'failure'
         uses: actions/upload-artifact@v3
@@ -57,6 +64,7 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
+      # To make your workflows faster and more efficient, you can create and use caches for dependencies and other commonly reused files.
       - name: Cache dependencies
         id: cache
         uses: actions/cache@v3
