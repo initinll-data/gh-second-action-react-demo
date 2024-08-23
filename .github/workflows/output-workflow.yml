@@ -26,3 +26,9 @@ jobs:
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       echo-var: "Hello from caller"
+  print-deploy-result:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print deploy output
+        run: echo ${{ needs.deploy.outputs.wf-status }}

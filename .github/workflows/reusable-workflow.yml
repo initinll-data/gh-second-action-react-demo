@@ -8,14 +8,24 @@ on:
         type: string
         required: false
         default: 'hello-world'
-jobs:
+    outputs:
+      wf-status: 
+        description: The result of this reusable wf
+        value: ${{ jobs.deploy.outputs.deploy-status }}
+
+jobs:   
   display-input:
     runs-on: ubuntu-latest
     steps:
       - name: Output input
         run: echo ${{ inputs.echo-var }}
   deploy:
+    outputs:
+      deploy-status: ${{ steps.set-result.outputs.step-result }}
     runs-on: ubuntu-latest
     steps:
       - name: Output Information
         run: echo "Deploying & Uploading"
+      - name: Set result output
+        id: set-result
+        run: echo "step-result=reusable job/step success" >> $GITHUB_OUTPUT
