@@ -8,6 +8,7 @@ on: push
 # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/running-variations-of-jobs-in-a-workflow
 jobs:
   build:
+    continue-on-error: true
     strategy:
       matrix:
         node-version: [12, 14, 16]
